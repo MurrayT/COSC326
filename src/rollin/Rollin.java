@@ -1,17 +1,17 @@
 package rollin;
 
 /**
- * An abstract class for the Rollin' etude used in COCSC326 SS 2018.
+ * An abstract class for the Rollin' etude.
  *
  * @author Michael Albert
  */
 public abstract class Rollin {
 
     /*
-    A convenience array used in determining whether or not six dice form
-    two sets -- it represents all the possible partitions of the indices 0
-    through 5 into two groups of three.
-    */
+     A convenience array used in determining whether or not six dice form
+     two sets -- it represents all the possible partitions of the indices 0
+     through 5 into two groups of three.
+     */
     static final int[][][] setIndices = new int[][][]{
             {{0, 1, 2}, {3, 4, 5}},
             {{0, 1, 3}, {2, 4, 5}},
@@ -73,7 +73,7 @@ public abstract class Rollin {
      *
      * @return true if the dice form two sets, false otherwise
      */
-    public final boolean isComplete() {
+    public boolean isComplete() {
         for (int[][] si : setIndices) {
             if (isSet(si[0]) && isSet(si[1])) {
                 return true;
@@ -81,6 +81,7 @@ public abstract class Rollin {
         }
         return false;
     }
+
 
     /**
      * Determine whether the dice at a given triple of indices form a set.
@@ -107,6 +108,10 @@ public abstract class Rollin {
         int max = Math.max(a, Math.max(b, c));
         int min = Math.min(a, Math.min(b, c));
         return max - min == 2;
+    }
+
+    void setDice(int[] dice) {
+        this.dice = dice;
     }
 
 }
