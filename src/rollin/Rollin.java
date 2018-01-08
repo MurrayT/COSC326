@@ -12,17 +12,17 @@ public abstract class Rollin {
     two sets -- it represents all the possible partitions of the indices 0
     through 5 into two groups of three.
     */
-    private static final int[][][] setIndices = new int[][][]{
-        {{0, 1, 2}, {3, 4, 5}},
-        {{0, 1, 3}, {2, 4, 5}},
-        {{0, 1, 4}, {2, 3, 5}},
-        {{0, 1, 5}, {2, 3, 4}},
-        {{0, 2, 3}, {1, 4, 5}},
-        {{0, 2, 4}, {1, 3, 5}},
-        {{0, 2, 5}, {1, 3, 4}},
-        {{0, 3, 4}, {1, 2, 5}},
-        {{0, 3, 5}, {1, 2, 4}},
-        {{0, 4, 5}, {1, 2, 3}}
+    static final int[][][] setIndices = new int[][][]{
+            {{0, 1, 2}, {3, 4, 5}},
+            {{0, 1, 3}, {2, 4, 5}},
+            {{0, 1, 4}, {2, 3, 5}},
+            {{0, 1, 5}, {2, 3, 4}},
+            {{0, 2, 3}, {1, 4, 5}},
+            {{0, 2, 4}, {1, 3, 5}},
+            {{0, 2, 5}, {1, 3, 4}},
+            {{0, 3, 4}, {1, 2, 5}},
+            {{0, 3, 5}, {1, 2, 4}},
+            {{0, 4, 5}, {1, 2, 3}}
     };
 
     int[] dice;
@@ -55,7 +55,7 @@ public abstract class Rollin {
      * replaced, i.e, if the roll is replacing the value dice[2], then it should
      * return 2. If the roll is not being used, then it may return any value
      * outside of the range from 0 to 5 inclusive.
-     * 
+     * <p>
      * Note that while your class may have other methods, none of them should
      * modify the array dice, e.g., by sorting it, since the supervisor program
      * will expect the results of handleRoll to be applied to the original set
@@ -70,6 +70,7 @@ public abstract class Rollin {
 
     /**
      * Determine whether the current dice form two sets.
+     *
      * @return true if the dice form two sets, false otherwise
      */
     public final boolean isComplete() {
@@ -83,11 +84,11 @@ public abstract class Rollin {
 
     /**
      * Determine whether the dice at a given triple of indices form a set.
-     * 
+     *
      * @param indices the indices
      * @return true if the dice at those indices form a set, false otherwise.
      */
-    private boolean isSet(int[] indices) {
+    public boolean isSet(int[] indices) {
         // First just get the values at those indices to save typing.
         int a = dice[indices[0]];
         int b = dice[indices[1]];
@@ -100,7 +101,7 @@ public abstract class Rollin {
         if (a == b || a == c || b == c) {
             return false;
         }
-        
+
         // If all three are different and largest minus smallest is 2 then it
         // is a set, otherwise not.
         int max = Math.max(a, Math.max(b, c));
