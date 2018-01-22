@@ -2,7 +2,8 @@ package iota;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class IotaDisplay extends JPanel {
 
@@ -12,54 +13,48 @@ public class IotaDisplay extends JPanel {
     public IotaDisplay() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         Manager m = new Manager();
-        Player p1 = new Player(m) {
-            @Override
-            public ArrayList<PlayedCard> makeMove() {
-                return null;
-            }
-
-            @Override
-            public ArrayList<Card> discard() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "Steve";
-            }
-        };
-        Player p2 = new Player(m) {
-            @Override
-            public ArrayList<PlayedCard> makeMove() {
-                return null;
-            }
-
-            @Override
-            public ArrayList<Card> discard() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "Dave";
-            }
-        };
+        Player p1 = ;
+        Player p2 = ;
         m.setPlayers(p1, p2);
         m.play();
-        dp = new DisplayPanel(m, 36 * 150, 36 * 150);
+        dp = new DisplayPanel(m, 68 * PlayedCard.SIZE, 68 * PlayedCard.SIZE);
         sp = new JScrollPane(dp);
-        sp.setPreferredSize(new Dimension(800, 600));
+        sp.setPreferredSize(new Dimension(810, 630));
         add(sp);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        sp.getViewport().setViewPosition(new Point(dp.width / 2, dp.height / 2));
+        sp.getViewport().setViewPosition(new Point(dp.width / 2 - 4 * PlayedCard.SIZE, dp.height / 2 - 3 * PlayedCard.SIZE));
         JPanel hands = new JPanel();
         add(hands);
         hands.setLayout(new BoxLayout(hands, BoxLayout.LINE_AXIS));
-        HandPanel hp1 = new HandPanel(m, sp.getWidth() / 2, 150, p1);
-        HandPanel hp2 = new HandPanel(m, sp.getHeight() / 2, 150, p2);
+        HandPanel hp1 = new HandPanel(m, sp.getWidth() / 2, 140, p1);
+        HandPanel hp2 = new HandPanel(m, sp.getHeight() / 2, 140, p2);
         hands.add(hp1);
         hands.add(hp2);
+        JPanel bp = new JPanel();
+        bp.setLayout(new BoxLayout(bp, BoxLayout.LINE_AXIS));
+        JButton stepButton = new JButton("Step");
+        bp.add(stepButton);
+        JButton runButton = new JButton("Center");
+        bp.add(runButton);
+        add(bp);
+        stepButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (m.isRunning) {
+                    m.step();
+                    dp.repaint();
+                    hp1.repaint();
+                    hp2.repaint();
+                }
+            }
+        });
 
+        runButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sp.getViewport().setViewPosition(new Point(dp.width / 2 - 4 * PlayedCard.SIZE, dp.height / 2 - 3 * PlayedCard.SIZE));
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -72,8 +67,6 @@ public class IotaDisplay extends JPanel {
     }
 
     private static void createAndShowGui() {
-        System.out.println("Created GUI on EDT? " +
-                SwingUtilities.isEventDispatchThread());
         JFrame frame = new JFrame("Iota Display");
         frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

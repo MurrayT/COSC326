@@ -14,7 +14,7 @@ public class PlayedCard {
     Player p;
     int x;
     int y;
-    private static final int SIZE = 90;
+    static final int SIZE = 90;
     private static final int BORDER_RADIUS = SIZE / 10;
     private static final int PIPSIZE = SIZE / 10;
 
