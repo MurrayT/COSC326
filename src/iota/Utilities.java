@@ -112,7 +112,7 @@ public class Utilities {
      * as it is supposed to be called only after the play has been checked for
      * legality.
      *
-     * @param cards    The cards played
+     * @param cards The cards played
      * @param oldBoard The board
      * @return The score of the play
      */
@@ -202,25 +202,30 @@ public class Utilities {
 
         if (inRow(cards)) {
             ArrayList<PlayedCard> block = horizontalBlock(cards.get(0), newBoard);
+            if (block.size() < cards.size() || !block.containsAll(cards)) return false;
+            if (block.size() == cards.size()) {
+                boolean goodBlock = false;
+                for (PlayedCard c : cards) {
+                    goodBlock |= verticalBlock(c, newBoard).size() > 1;
+                }
+                if (!goodBlock) return false;
+            }
 
-            if (!block.containsAll(cards)) {
-                return false;
-            }
-            if (!inLine(block)) {
-                return false;
-            }
             return checkCols(cards, newBoard);
         }
 
         if (inCol(cards)) {
             ArrayList<PlayedCard> block = verticalBlock(cards.get(0), newBoard);
 
-            if (!block.containsAll(cards)) {
-                return false;
+            if (block.size() < cards.size() || !block.containsAll(cards)) return false;
+            if (block.size() == cards.size()) {
+                boolean goodBlock = false;
+                for (PlayedCard c : cards) {
+                    goodBlock |= horizontalBlock(c, newBoard).size() > 1;
+                }
+                if (!goodBlock) return false;
             }
-            if (!inLine(block)) {
-                return false;
-            }
+
             return checkRows(cards, newBoard);
         }
         return false;
@@ -351,16 +356,16 @@ public class Utilities {
 
         ArrayList<PlayedCard> b = new ArrayList<>();
         b.add(new PlayedCard(new Card(Colour.BLUE, Shape.CROSS, 1), null, 0, 0));
-        b.add(new PlayedCard(new Card(Colour.GREEN, Shape.CIRCLE, 2), null, 1, 0));
-        b.add(new PlayedCard(new Card(Colour.BLUE, Shape.TRIANGLE, 1), null, 1, -1));
-        b.add(new PlayedCard(new Card(Colour.YELLOW, Shape.SQUARE, 4), null, 1, -2));
-        System.out.println(boardToString(b));
+//        b.add(new PlayedCard(new Card(Colour.GREEN, Shape.CIRCLE, 2), null, 1, 0));
+//        b.add(new PlayedCard(new Card(Colour.BLUE, Shape.TRIANGLE, 1), null, 1, -1));
+//        b.add(new PlayedCard(new Card(Colour.YELLOW, Shape.SQUARE, 4), null, 1, -2));
+//        System.out.println(boardToString(b));
 
         ArrayList<PlayedCard> p = new ArrayList<>();
-        p.add(new PlayedCard(new Card(Colour.GREEN, Shape.CROSS, 2), null, 0, 1));
-        p.add(new PlayedCard(new Card(Colour.RED, Shape.CROSS, 3), null, 1, 1));
-        p.add(new PlayedCard(new Card(Colour.YELLOW, Shape.CROSS, 1), null, 2, 1));
-        p.add(new PlayedCard(new Card(Colour.BLUE, Shape.CROSS, 4), null, 3, 1));
+        p.add(new PlayedCard(new Card(Colour.GREEN, Shape.CROSS, 2), null, 1, 1));
+//        p.add(new PlayedCard(new Card(Colour.RED, Shape.CROSS, 3), null, 1, 1));
+//        p.add(new PlayedCard(new Card(Colour.YELLOW, Shape.CROSS, 1), null, 2, 1));
+//        p.add(new PlayedCard(new Card(Colour.BLUE, Shape.CROSS, 4), null, 3, 1));
 
         System.out.println(isLegalMove(p, b));
         System.out.println(scoreForMove(p, b));
