@@ -217,6 +217,8 @@ public class Manager {
 
     void step() {
         if (!gameOver) {
+            if (!gameStarted)
+                gameStarted = true;
             Player current = players.get(playerNumber);
             playerStep(current);
             playerNumber = (playerNumber + 1) % players.size();
