@@ -60,7 +60,12 @@ public class Manager {
      * @return The hand of the given player.
      */
     public ArrayList<Card> getHand(Player p) {
-        return hands.get(p);
+        ArrayList<Card> handCopy = new ArrayList<>();
+        for (Card c :
+                hands.get(p)) {
+            handCopy.add(new Card(c.colour, c.shape, c.value));
+        }
+        return handCopy;
     }
 
     /**
