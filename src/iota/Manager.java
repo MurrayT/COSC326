@@ -30,7 +30,6 @@ public class Manager {
     void addPlayer(Player player) {
         System.out.println(player.getName());
         this.players.add(player);
-        score.put(player, 0);
     }
 
     void addPlayers(Player... players) {
