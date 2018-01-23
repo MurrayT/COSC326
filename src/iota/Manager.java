@@ -2,6 +2,7 @@ package iota;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,24 +14,30 @@ import java.util.stream.Collectors;
 public class Manager {
 
     private ArrayList<PlayedCard> board = new ArrayList<>();
-    private Player p1;
-    private Player p2;
+    int playerNumber = 0;
     private HashMap<Player, ArrayList<Card>> hands = new HashMap<>();
     private HashMap<Player, Integer> score = new HashMap<>();
     private Deck deck;
-    public boolean isAutorun = false;
-    int playernumber = 1;
-    boolean isRunning = true;
+    int passCounter = 0;
+    int drawCounter = 0;
+    boolean gameOver = false;
+    boolean gameStarted = false;
+    private ArrayList<Player> players = new ArrayList<>();
 
     public Manager() {
-        this.deck = new Deck();
     }
 
-    void setPlayers(Player p1, Player p2) {
-        this.p1 = p1;
-        this.p2 = p2;
-        score.put(p1, 0);
-        score.put(p2, 0);
+    void addPlayer(Player player) {
+        System.out.println(player.getName());
+        this.players.add(player);
+        score.put(player, 0);
+    }
+
+    void addPlayers(Player... players) {
+        for (Player player :
+                players) {
+            addPlayer(player);
+        }
     }
 
     /**
@@ -58,25 +65,24 @@ public class Manager {
     }
 
     /**
-     * Compute the net score of the given player.
+     * Compute the score of the given player.
      *
      * @param p the player.
      * @return The net score for the player.
      */
-    public int getScore(Player p) {
-        if (p == p1) {
-            return score.get(p1) - score.get(p2);
-        } else {
-            return score.get(p2) - score.get(p1);
+
+    public ArrayList<Integer> netScores(Player p) {
+        ArrayList<Integer> scores = new ArrayList<>();
+        for (Player opponent :
+                players) {
+            if (!opponent.equals(p))
+                scores.add(score.get(p) - score.get(opponent));
         }
+        return scores;
     }
 
     public int getRawScore(Player p) {
-        if (p == p1) {
-            return score.get(p1);
-        } else {
-            return score.get(p2);
-        }
+        return score.get(p);
     }
 
     /**
@@ -85,31 +91,60 @@ public class Manager {
      * @param p the player
      * @return the opponent's hand size.
      */
-    public int opponentsHandSize(Player p) {
-        if (p == p1) {
-            return hands.get(p2).size();
-        } else {
-            return hands.get(p1).size();
+    public ArrayList<Integer> opponentsHandSize(Player p) {
+        ArrayList<Integer> handSizes = new ArrayList<>();
+        for (Player opponent :
+                players) {
+            if (!opponent.equals(p))
+                handSizes.add(hands.get(opponent).size());
         }
+        return handSizes;
     }
 
     private void dealHands() {
-        ArrayList<Card> h = new ArrayList<Card>();
-        for (int i = 0; i < 4; i++) h.add(deck.dealCard());
-        hands.put(p1, h);
-        h = new ArrayList<Card>();
-        for (int i = 0; i < 4; i++) h.add(deck.dealCard());
-        hands.put(p2, h);
+        for (Player player :
+                players) {
+            ArrayList<Card> h = new ArrayList<>();
+            for (int i = 0; i < 4; i++) h.add(deck.dealCard());
+            hands.put(player, h);
+        }
     }
 
     private void seedBoard() {
         board.add(new PlayedCard(deck.dealCard(), null, 0, 0));
     }
 
-    void play() {
+    void resetScores() {
+        for (Player player :
+                players) {
+            score.put(player, 0);
+        }
+    }
+
+    void setup() {
+        deck = new Deck();
+        board = new ArrayList<>();
+        resetScores();
         dealHands();
         seedBoard();
-        // More stuff
+        gameOver = false;
+    }
+
+    void printSummary() {
+        System.out.println("Final Score");
+        for (Player player :
+                players) {
+            System.out.println((player.getName() + "          ").substring(0, 10) + " " + score.get(player));
+        }
+    }
+
+    void play() {
+        if (!gameStarted) {
+            setup();
+        }
+        while (!gameOver) {
+            step();
+        }
     }
 
     void deal_to_player(Player player) {
@@ -126,52 +161,69 @@ public class Manager {
         hands.get(player).removeAll(discardPile);
     }
 
-    void playerStep(Player player) {
+    boolean playerStep(Player player) {
         ArrayList<PlayedCard> proposedMove = player.makeMove();
         if (proposedMove.isEmpty()) {
             // move empty, make player discard.
+            drawCounter++;
             ArrayList<Card> discardPile = player.discard();
-            if (hands.get(player).containsAll(discardPile)) {
+            HashSet<Card> d = new HashSet<>();
+            d.addAll(discardPile);
+            if (d.size() == discardPile.size() && hands.get(player).containsAll(d)) {
                 discardStep(player, discardPile);
                 deal_to_player(player);
             } else {
+                passCounter++;
                 System.err.println("Some cards are not in " + player.getName() + "'s hand. Failed to Discard");
             }
         } else {
-            List cards = proposedMove.stream().map(i -> i.card).collect(Collectors.toList());
-            if (hands.get(player).containsAll(cards)) {
-                if (Utilities.isLegalMove(proposedMove, board)) {
+            if (Utilities.isLegalMove(proposedMove, board)) {
+                int moveScore = Utilities.scoreForMove(proposedMove, board);
+                List cards = proposedMove.stream().map(i -> i.card).collect(Collectors.toList());
+                if (hands.get(player).containsAll(cards)) {
                     int multiplier = 1;
-                    //Completely legal
-                    int moveScore = Utilities.scoreForMove(proposedMove, board);
-                    board.addAll(proposedMove);
                     hands.get(player).removeAll(cards);
-                    deal_to_player(player);
-                    if (!deck.hasCard() && getHand(player).isEmpty())
+                    if (!deck.hasCard() && hands.get(player).isEmpty()) {
                         multiplier = 2;
-                    score.replace(player, score.get(player) + moveScore * multiplier);
+                        gameOver = true;
+                    }
+                    score.replace(player, score.get(player) + multiplier * moveScore);
+                    deal_to_player(player);
+                    for (PlayedCard pc : proposedMove)
+                        board.add(new PlayedCard(pc.card, player, pc.x, pc.y));
+                    passCounter = 0;
+                    drawCounter = 0;
+
                 } else {
-                    System.err.println(player.getName() + " tried to play an illegal move.");
+                    passCounter++;
+                    System.err.println("Some cards are not in " + player.getName() + "'s hand. Failed to Discard");
+                    System.err.flush();
                 }
+
             } else {
-                System.err.println("Some cards are not in " + player.getName() + "'s hand. Failed to Play");
+                passCounter++;
+                drawCounter++;
+                System.err.println(player.getName() + " tried to play an illegal move.");
+                System.err.flush();
+            }
+            if (drawCounter >= 4 || passCounter >= 2) {
+                System.err.println("Game over");
+                System.err.flush();
+                gameOver = true;
             }
 
         }
+        return gameOver;
     }
 
     void step() {
-        if ((!getHand(p1).isEmpty() && !getHand(p2).isEmpty())) {
-            if (playernumber == 1) {
-                playerStep(p1);
-                playernumber = 2;
-            } else {
-                playerStep(p2);
-                playernumber = 1;
-            }
-        } else {
-            System.err.println("GAME OVER");
-            isRunning = false;
+        if (!gameOver) {
+            Player current = players.get(playerNumber);
+            playerStep(current);
+            playerNumber = (playerNumber + 1) % players.size();
+        }
+        if (gameOver) {
+            printSummary();
         }
     }
 

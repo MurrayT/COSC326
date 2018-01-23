@@ -32,7 +32,7 @@ class DisplayPanel extends JPanel {
             card.drawCard(g, 34);
         }
 
-        if (!manager.isRunning) {
+        if (manager.gameOver) {
             g.setColor(Color.BLACK);
             g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 48));
             g.drawString("GAME OVER!!", this.width / 2, this.height / 2);
