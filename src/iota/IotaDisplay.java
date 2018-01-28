@@ -18,24 +18,29 @@ public class IotaDisplay extends JPanel {
           add in your own Player implementations in the p1, p2 lines.
          */
         Manager m = new Manager();
-        Player p1 = ;
-        Player p2 = ;
+//        Player p1 = ;
+//        Player p2 = ;
 
-        m.addPlayers(p1, p2);
+        m.addPlayers();
         m.setup();
         /*
          * Below this is GUI stuff only
          */
 
+        int displayWidth = 15;
+        int displayHeight = 11;
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         dp = new DisplayPanel(m, 68 * PlayedCard.SIZE, 68 * PlayedCard.SIZE);
+        Point defaultPosition = new Point(dp.width / 2 - displayWidth / 2 * PlayedCard.SIZE, dp.height / 2 - displayHeight / 2 * PlayedCard.SIZE);
         sp = new JScrollPane(dp);
-        sp.setPreferredSize(new Dimension(19 * PlayedCard.SIZE, 15 * PlayedCard.SIZE));
-        sp.setMinimumSize(new Dimension(19 * PlayedCard.SIZE, 15 * PlayedCard.SIZE));
+        sp.setPreferredSize(new Dimension(displayWidth * PlayedCard.SIZE, displayHeight * PlayedCard.SIZE));
+        sp.setMinimumSize(new Dimension(displayWidth * PlayedCard.SIZE, displayHeight * PlayedCard.SIZE));
+        sp.getVerticalScrollBar().setUnitIncrement(16);
+        sp.getHorizontalScrollBar().setUnitIncrement(16);
         add(sp);
         add(Box.createHorizontalGlue());
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        sp.getViewport().setViewPosition(new Point(dp.width / 2 - 9 * PlayedCard.SIZE, dp.height / 2 - 7 * PlayedCard.SIZE));
+        sp.getViewport().setViewPosition(defaultPosition);
         JPanel hands = new JPanel();
         add(hands);
         hands.setLayout(new BoxLayout(hands, BoxLayout.PAGE_AXIS));
@@ -77,7 +82,7 @@ public class IotaDisplay extends JPanel {
         centerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sp.getViewport().setViewPosition(new Point(dp.width / 2 - 4 * PlayedCard.SIZE, dp.height / 2 - 3 * PlayedCard.SIZE));
+                sp.getViewport().setViewPosition(defaultPosition);
             }
         });
         runButton.addActionListener(new ActionListener() {

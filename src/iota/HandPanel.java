@@ -8,8 +8,8 @@ class HandPanel extends JPanel {
 
     Manager manager;
 
-    int height;
-    int width;
+    private int height;
+    private int width;
     Player player;
 
     public HandPanel(Manager m, int width, int height, Player p) {
@@ -43,6 +43,7 @@ class HandPanel extends JPanel {
             pc.drawCard(g, 0);
         }
         g.setColor(Color.BLACK);
+        g.drawString("Player Number: " + (manager.getPlayerNumber(player) + 1), 10, 90);
         g.drawString("Player: " + player.getName(), 10, 110);
         g.drawString("Score: " + manager.getRawScore(player), 10, 130);
     }
