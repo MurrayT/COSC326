@@ -68,7 +68,7 @@ public class Utilities {
      * @param cards the cards
      * @return true if the cards form a set
      */
-    static boolean formSet(ArrayList<PlayedCard> cards) {
+    public static boolean formSet(ArrayList<PlayedCard> cards) {
         if (cards.size() <= 2) {
             return true;
         }
@@ -90,7 +90,7 @@ public class Utilities {
 
     }
 
-    static int scoreForMove(ArrayList<PlayedCard> cards, ArrayList<PlayedCard> board) {
+    public static int scoreForMove(ArrayList<PlayedCard> cards, ArrayList<PlayedCard> board) {
         if (!isLegalMove(cards, board)) {
             return ILLEGAL;
         }
@@ -180,7 +180,7 @@ public class Utilities {
         }
     }
 
-    static boolean isLegalMove(ArrayList<PlayedCard> cards, ArrayList<PlayedCard> board) {
+    public static boolean isLegalMove(ArrayList<PlayedCard> cards, ArrayList<PlayedCard> board) {
 
         // First check that there are no duplicated locations or cards between
         // the cards and the board, or among the cards.
@@ -249,7 +249,7 @@ public class Utilities {
         return false;
     }
 
-    static PlayedCard cardAt(ArrayList<PlayedCard> board, int x, int y) {
+    public static PlayedCard cardAt(ArrayList<PlayedCard> board, int x, int y) {
         for (PlayedCard c : board) {
             if (c.x == x && c.y == y) {
                 return c;
@@ -258,7 +258,7 @@ public class Utilities {
         return null;
     }
 
-    static ArrayList<PlayedCard> horizontalBlock(PlayedCard card, ArrayList<PlayedCard> board) {
+    public static ArrayList<PlayedCard> horizontalBlock(PlayedCard card, ArrayList<PlayedCard> board) {
         ArrayList<PlayedCard> block = new ArrayList<>();
         block.add(card);
         int x = card.x + 1;
@@ -285,7 +285,7 @@ public class Utilities {
         return block;
     }
 
-    static ArrayList<PlayedCard> verticalBlock(PlayedCard card, ArrayList<PlayedCard> board) {
+    public static ArrayList<PlayedCard> verticalBlock(PlayedCard card, ArrayList<PlayedCard> board) {
         ArrayList<PlayedCard> block = new ArrayList<>();
         block.add(card);
         int x = card.x;

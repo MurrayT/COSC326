@@ -37,15 +37,22 @@ public class Card {
         if (this.shape != other.shape) {
             return false;
         }
-        if (this.value != other.value) {
-            return false;
-        }
-        return true;
+        return this.value == other.value;
     }
 
     public String toString() {
         return "" + colour + shape + value;
     }
 
+    public int getValue() {
+        return value;
+    }
 
+    public Colour getColour() {
+        return colour;
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
 }

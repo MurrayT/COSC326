@@ -12,8 +12,8 @@ public class PlayedCard {
 
     Card card;
     Player p;
-    int x;
-    int y;
+    public final int x;
+    public final int y;
     static final int SIZE = 60;
     private static final int BORDER_RADIUS = SIZE / 10;
     private static final int PIPSIZE = SIZE / 10;
@@ -71,6 +71,10 @@ public class PlayedCard {
         drawBackground(g, x, y);
         drawColorShape(g, x, y);
         drawPips(g, x, y);
+    }
+
+    public Card getCard() {
+        return new Card(this.card.getColour(), this.card.getShape(), this.card.getValue());
     }
 
     private void drawPips(Graphics g, int actualx, int actualy) {

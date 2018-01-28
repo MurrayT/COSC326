@@ -9,8 +9,8 @@ import java.util.ArrayList;
  */
 public abstract class Player {
 
-    final static ArrayList<PlayedCard> PASS = new ArrayList<PlayedCard>();
-    final Manager m;
+    protected final static ArrayList<PlayedCard> PASS = new ArrayList<PlayedCard>();
+    protected final Manager m;
 
     public Player(Manager m) {
         this.m = m;
